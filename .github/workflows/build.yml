@@ -1,23 +1,37 @@
-name: Build Kernel Upstream
+name: Upstream Kernel
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - main
+  pull_request:
 
 jobs:
   build:
+    name: Upstream Kernel Build
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout Source
+      - name: Checkout Repo
         uses: actions/checkout@v3
 
-      - name: Setup Build Script
+      - name: Setup Dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y bc bison flex build-essential libncurses-dev libssl-dev wget curl git
+
+      - name: Prepare Build Script
         run: chmod +x build.sh
 
-      - name: Start Compilation
+      - name: Load Config (Optional)
+        run: source config.env || true
+
+      - name: Compile Kernel
         run: ./build.sh
 
-      - name: Upload Output
+      - name: Upload Kernel Output
         uses: actions/upload-artifact@v3
         with:
-          name: ReogKernelOutput
-          path: out/Image.gz-dtb
+          name: kernel_output
+          path: out/
