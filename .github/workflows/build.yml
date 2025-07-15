@@ -1,0 +1,23 @@
+name: Build Kernel Upstream
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Source
+        uses: actions/checkout@v3
+
+      - name: Setup Build Script
+        run: chmod +x build.sh
+
+      - name: Start Compilation
+        run: ./build.sh
+
+      - name: Upload Output
+        uses: actions/upload-artifact@v3
+        with:
+          name: ReogKernelOutput
+          path: out/Image.gz-dtb
